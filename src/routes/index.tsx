@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Menu,
@@ -29,7 +31,16 @@ import {
 } from "lucide-react";
 
 import logo from "@/assets/logo.png";
-import beforeAfter from "@/assets/before-after-1.jpg";
+import sofaAzulAntes from "@/assets/sofa azul antes.jpeg";
+import sofaAzulDepois from "@/assets/sofa azul depois.jpeg";
+import sofaBegeAntes from "@/assets/sofa bege antes.jpeg";
+import sofaBegeDepois from "@/assets/sofa bege depois.jpeg";
+import sofaBege2Antes from "@/assets/sofa bege2 antes.jpeg";
+import sofaBege2Depois from "@/assets/sofa bege2 depois.jpeg";
+import cadeiraAntes from "@/assets/cadeira antes.jpg";
+import cadeiraDepois from "@/assets/cadeira depois.jpg";
+import colchaoAntes from "@/assets/colchao antes.jpg";
+import colchaoDepois from "@/assets/colchao depois.jpg";
 import { BrazilMap } from "@/components/site/BrazilMap";
 import { DrBacteriaSection } from "@/components/site/DrBacteriaSection";
 import { NovaNexoBadge } from "@/components/NovaNexoBadge";
@@ -59,7 +70,30 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const BEFORE_AFTER = [
+  {
+    title: "Sofá Bege",
+    before: sofaBegeAntes,
+    after: sofaBegeDepois,
+  },
+];
+
 const WHATSAPP = "553597291894";
+
+const MSG_ORCAMENTO =
+  "Olá!\n\nVi as transformações no site da Sofá Novo de Novo e quero saber quanto custa para deixar meu estofado com aparência de novo.\n\nPode me passar um orçamento?";
+
+const MSG_BLINDAGEM =
+  "Olá!\n\nQuero proteger meu sofá contra líquidos, manchas e sujeira com a blindagem impermeabilizante.\n\nPode me passar um orçamento?";
+
+const MSG_CALCULADORA = (valor: string) =>
+  `Olá!\n\nMontei uma simulação pelo site.\n\nValor estimado: ${valor}\n\nGostaria de confirmar o orçamento e tirar algumas dúvidas.`;
+
+const MSG_GARANTIA =
+  "Olá!\n\nGostaria de agendar uma higienização com garantia de resultado.\n\nComo funciona?";
+
+const MSG_FLUTUANTE =
+  "Olá!\n\nGostaria de falar com um especialista da Sofá Novo de Novo.\n\nPode me ajudar?";
 
 const heroVideo = "/videos/higienizacao-1.mp4";
 const videoHigienizacao = "/videos/higienizacao-1.mp4";
@@ -79,12 +113,65 @@ const NAV = [
   { label: "Contato", href: "#contato" },
 ];
 
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShow(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`${className} transition-all duration-700 ease-out ${
+        show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
 function Home() {
+  useEffect(() => {
+    AOS.init({
+      duration: 700,
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 80,
+    });
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Header />
       <Hero />
-      <BeforeAfter />
+      <ItemAfter />
       <Transformations />
       <Processo />
       <Impact />
@@ -125,18 +212,12 @@ function Header() {
             scrolled ? "glass-strong" : "glass"
           }`}
         >
-          <a href="#inicio" className="flex items-center gap-2 min-w-0">
+<a href="#inicio" className="flex items-center gap-3 min-w-0">
             <img
               src={logo}
               alt="Sofá Novo de Novo"
-              className="h-9 w-9 sm:h-10 sm:w-10 object-contain shrink-0"
-            />
-
-            <span className="hidden sm:block font-display font-bold text-sm leading-tight">
-              SOFÁ NOVO
-              <br />
-              <span className="text-gradient">DE NOVO</span>
-            </span>
+             className="h-11 sm:h-12 w-auto object-contain shrink-0 rounded-md"
+            />  
           </a>
 
           <nav className="hidden lg:flex items-center justify-center gap-1">
@@ -153,13 +234,13 @@ function Header() {
 
           <div className="flex items-center gap-2 justify-end">
             <a
-              href={wa("Olá! Quero um orçamento.")}
+              href={wa(MSG_ORCAMENTO)}
               target="_blank"
               rel="noreferrer"
               className="hidden sm:inline-flex items-center gap-2 gradient-teal text-primary-foreground font-semibold text-sm px-4 py-2 rounded-xl glow-teal hover:scale-[1.03] transition"
             >
               <MessageCircle className="size-4" />
-              Orçamento
+              Solicitar orçamento
             </a>
 
             <button
@@ -186,7 +267,7 @@ function Header() {
             ))}
 
             <a
-              href={wa("Olá!")}
+              href={wa(MSG_FLUTUANTE)}
               className="mt-2 block text-center gradient-teal text-primary-foreground font-semibold px-4 py-3 rounded-xl"
             >
               Falar no WhatsApp
@@ -243,7 +324,7 @@ function Hero() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href={wa("Quero um orçamento.")}
+              href={wa(MSG_ORCAMENTO)}
               target="_blank"
               rel="noreferrer"
               className="group inline-flex items-center gap-2 gradient-teal text-primary-foreground font-bold px-6 py-3.5 rounded-2xl glow-teal hover:scale-[1.03] transition"
@@ -284,16 +365,17 @@ function Hero() {
           <div className="absolute -inset-6 rounded-[2rem] glow-soft opacity-70" />
 
           <div className="relative rounded-[2rem] overflow-hidden glass-strong aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5]">
-            <video
-              src={heroVideo}
-              autoPlay
-              muted
-              loop
-              playsInline
+          <video
+           src={heroVideo}
+           autoPlay
+           muted
+           loop
+           playsInline
+           preload="metadata"
               className="absolute inset-0 w-full h-full object-cover"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+            <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-3">
               <div>
@@ -317,10 +399,19 @@ function Hero() {
   );
 }
 
-function BeforeAfter() {
+function ItemAfter() {
+  const [active, setActive] = useState(0);
   const [pos, setPos] = useState(50);
+
   const ref = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+
+  const current = BEFORE_AFTER[active];
+
+  // sempre volta o slider pro meio quando troca a foto
+  useEffect(() => {
+    setPos(50);
+  }, [active]);
 
   useEffect(() => {
     const move = (clientX: number) => {
@@ -331,13 +422,13 @@ function BeforeAfter() {
 
       setPos(Math.max(0, Math.min(100, x)));
     };
-
+    
     const onMove = (e: MouseEvent) => move(e.clientX);
     const onTouch = (e: TouchEvent) => move(e.touches[0].clientX);
     const stop = () => (dragging.current = false);
 
     window.addEventListener("mousemove", onMove);
-    window.addEventListener("touchmove", onTouch);
+    window.addEventListener("touchmove", onTouch, { passive: true });
     window.addEventListener("mouseup", stop);
     window.addEventListener("touchend", stop);
 
@@ -358,13 +449,32 @@ function BeforeAfter() {
           </span>
 
           <h2 className="mt-3 font-display font-black text-4xl sm:text-5xl lg:text-6xl">
-            Veja a transformação{" "}
-            <span className="text-gradient">acontecer</span>.
+            Veja a transformação <span className="text-gradient">acontecer</span>.
           </h2>
 
           <p className="mt-4 text-foreground/65 text-lg">
-            Uma única imagem. Arraste e veja o efeito de limpeza.
+            Arraste e compare resultados reais de higienização.
           </p>
+        </div>
+
+        <div className="mb-6 flex flex-wrap justify-center gap-2">
+          {BEFORE_AFTER.map((item, index) => (
+            <button
+              key={item.title}
+              type="button"
+              onClick={() => {
+                setActive(index);
+                setPos(50);
+              }}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                active === index
+                  ? "gradient-teal text-primary-foreground glow-teal"
+                  : "glass text-foreground/80 hover:text-foreground"
+              }`}
+            >
+              {item.title}
+            </button>
+          ))}
         </div>
 
         <div className="relative max-w-5xl mx-auto">
@@ -377,9 +487,10 @@ function BeforeAfter() {
             onTouchStart={() => (dragging.current = true)}
           >
             <img
-              src={beforeAfter}
-              alt="Sofá limpo"
+              src={current.after}
+              alt={`${current.title} depois da limpeza`}
               className="absolute inset-0 w-full h-full object-cover"
+              draggable={false}
             />
 
             <div className="absolute top-4 right-4 glass rounded-full px-3 py-1.5 text-xs font-semibold">
@@ -391,24 +502,13 @@ function BeforeAfter() {
               style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
             >
               <img
-                src={beforeAfter}
-                alt="Sofá antes da limpeza"
+                src={current.before}
+                alt={`${current.title} antes da limpeza`}
                 className="absolute inset-0 w-full h-full object-cover"
-                style={{
-                  filter:
-                    "grayscale(95%) brightness(0.42) contrast(1.25) saturate(0.5)",
-                }}
+                draggable={false}
               />
 
-              <div className="absolute inset-0 bg-black/20 mix-blend-multiply" />
-
-              <div
-                className="absolute inset-0 opacity-45"
-                style={{
-                  background:
-                    "radial-gradient(circle at 35% 70%, rgba(40,25,10,0.55), transparent 18%), radial-gradient(circle at 45% 62%, rgba(30,20,10,0.4), transparent 14%)",
-                }}
-              />
+              <div className="absolute inset-0 bg-black/15 mix-blend-multiply" />
 
               <div className="absolute top-4 left-4 glass rounded-full px-3 py-1.5 text-xs font-semibold">
                 ANTES
@@ -421,9 +521,10 @@ function BeforeAfter() {
             />
 
             <button
+              type="button"
               className="absolute top-1/2 -translate-y-1/2 size-14 rounded-full gradient-teal glow-teal grid place-items-center text-primary-foreground"
               style={{ left: `${pos}%`, transform: "translate(-50%, -50%)" }}
-              aria-label="Arrastar"
+              aria-label="Arrastar comparação"
             >
               <div className="flex items-center -mx-1">
                 <ChevronDown className="size-5 rotate-90" />
@@ -447,21 +548,29 @@ function BeforeAfter() {
   );
 }
 
-const CATS = ["Sofás", "Colchões", "Tapetes", "Poltronas", "Automotivo"] as const;
+const CATS = ["Sofás", "Colchões", "Cadeiras"] as const;
 
 type Cat = (typeof CATS)[number];
 
-const TRANSFORMS: { cat: Cat; title: string; img: string }[] = [
-  { cat: "Sofás", title: "Retrátil 3 lugares", img: beforeAfter },
-  { cat: "Sofás", title: "Sofá de canto", img: beforeAfter },
-  { cat: "Sofás", title: "Couro envelhecido", img: beforeAfter },
-  { cat: "Colchões", title: "Queen pillow top", img: beforeAfter },
-  { cat: "Colchões", title: "King com ácaros", img: beforeAfter },
-  { cat: "Tapetes", title: "Persa restaurado", img: beforeAfter },
-  { cat: "Tapetes", title: "Peludo branco", img: beforeAfter },
-  { cat: "Poltronas", title: "Reclinável veludo", img: beforeAfter },
-  { cat: "Automotivo", title: "Banco SUV completo", img: beforeAfter },
-  { cat: "Automotivo", title: "Hatch popular", img: beforeAfter },
+const TRANSFORMS: { cat: Cat; title: string; before: string; after: string }[] = [
+  {
+    cat: "Sofás",
+    title: "Sofá azul restaurado",
+    before: sofaAzulAntes,
+    after: sofaAzulDepois,
+  },
+  {
+    cat: "Cadeiras",
+    title: "Cadeira estofada higienizada",
+    before: cadeiraAntes,
+    after: cadeiraDepois,
+  },
+  {
+    cat: "Colchões",
+    title: "Colchão limpo e livre de manchas",
+    before: colchaoAntes,
+    after: colchaoDepois,
+  },
 ];
 
 function Transformations() {
@@ -480,12 +589,17 @@ function Transformations() {
             <h2 className="mt-3 font-display font-black text-4xl sm:text-5xl lg:text-6xl">
               Transformações <span className="text-gradient">Reais</span>
             </h2>
+
+            <p className="mt-4 text-foreground/65 text-lg">
+              Resultados reais em estofados que pareciam perdidos.
+            </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
             {CATS.map((c) => (
               <button
                 key={c}
+                type="button"
                 onClick={() => setCat(c)}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
                   cat === c
@@ -499,36 +613,76 @@ function Transformations() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-3 gap-5">
           {items.map((t, i) => (
             <div
               key={i}
-              className="group relative aspect-[3/4] rounded-2xl overflow-hidden glass cursor-pointer"
+className="group
+relative
+aspect-[4/5]
+overflow-hidden
+rounded-3xl
+glass
+border
+border-white/10
+cursor-pointer
+transition-all
+duration-500
+hover:-translate-y-2
+hover:border-primary/40
+hover:shadow-[0_20px_60px_rgba(0,255,220,.18)]"
             >
-              <img
-                src={t.img}
-                alt={t.title}
-                className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
-
-              <div className="absolute inset-0 ring-0 ring-primary/0 group-hover:ring-2 group-hover:ring-primary/60 transition rounded-2xl" />
-
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <div className="text-[10px] uppercase tracking-widest text-primary-glow">
-                  {t.cat}
+              <div className="absolute inset-0 grid grid-cols-2">
+                <div className="relative overflow-hidden">
+                  <img
+                    src={t.before}
+                    alt={`${t.title} antes`}
+                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/30" />
+                  <div className="absolute top-3 left-3 glass rounded-full px-2.5 py-1 text-[10px] font-bold">
+                    ANTES
+                  </div>
                 </div>
-                <div className="font-display font-bold text-lg leading-tight mt-1">
-                  {t.title}
-                </div>
-                <div className="mt-2 opacity-0 group-hover:opacity-100 transition flex items-center gap-2 text-sm text-primary">
-                  Ver caso <ArrowRight className="size-3" />
+
+                <div className="relative overflow-hidden">
+                  <img
+                    src={t.after}
+                    alt={`${t.title} depois`}
+                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute top-3 right-3 glass rounded-full px-2.5 py-1 text-[10px] font-bold">
+                    DEPOIS
+                  </div>
                 </div>
               </div>
 
-              <div className="absolute top-3 right-3 size-9 rounded-full glass-strong grid place-items-center opacity-0 group-hover:opacity-100 transition">
-                <Play className="size-4 text-primary" />
+<div
+className="
+absolute
+inset-0
+rounded-3xl
+border
+border-white/5
+group-hover:border-primary/60
+group-hover:shadow-[0_0_60px_rgba(40,220,215,.35)]
+transition-all
+duration-500
+"
+/>
+              <div className="absolute left-1/2 top-0 bottom-0 w-[2px] gradient-teal glow-teal" />
+
+<div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/70 to-transparent">
+               <div className="inline-flex items-center gap-2 rounded-full bg-primary/15 backdrop-blur-xl px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+  <span className="size-2 rounded-full bg-primary animate-pulse" />
+  Caso real
+</div>
+<div className="font-display font-black text-2xl leading-tight mt-2 group-hover:text-primary transition-colors">
+                  {t.title}
+                </div>
+                <div className="mt-2 opacity-0 group-hover:opacity-100 transition flex items-center gap-2 text-sm text-primary">
+                  Ver antes e depois <ArrowRight className="size-3" />
+                </div>
               </div>
             </div>
           ))}
@@ -592,14 +746,15 @@ function Processo() {
               onClick={() => setOpen(v.src)}
               className={`group relative ${v.aspect} rounded-3xl overflow-hidden glass-strong text-left`}
             >
-              <video
-                src={v.src}
-                muted
-                loop
-                playsInline
-                autoPlay
-                className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"
-              />
+<video
+  src={v.src}
+  muted
+  loop
+  playsInline
+  preload="metadata"
+  poster=""
+  className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"
+/>
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
@@ -631,7 +786,14 @@ function Processo() {
             className="relative max-w-md w-full aspect-[9/16] rounded-3xl overflow-hidden glass-strong glow-teal"
             onClick={(e) => e.stopPropagation()}
           >
-            <video src={open} autoPlay controls className="w-full h-full object-cover" />
+<video
+  src={open}
+  autoPlay
+  controls
+  playsInline
+  preload="auto"
+  className="w-full h-full object-cover"
+/>
 
             <button
               onClick={() => setOpen(null)}
@@ -723,7 +885,7 @@ function Blindagem() {
           </div>
 
           <a
-            href={wa("Quero blindagem do meu sofá.")}
+            href={wa(MSG_BLINDAGEM)}
             className="mt-8 inline-flex items-center gap-2 gradient-teal text-primary-foreground font-bold px-6 py-3.5 rounded-2xl glow-teal hover:scale-[1.03] transition"
           >
             <Shield className="size-5" />
@@ -905,7 +1067,7 @@ function Calculator() {
               </div>
 
               <a
-                href={wa(`Olá! Montei um orçamento: ${fmt(total)}.`)}
+                href={wa(MSG_CALCULADORA(fmt(total)))}
                 className={`mt-6 w-full inline-flex justify-center items-center gap-2 gradient-teal text-primary-foreground font-bold px-6 py-3.5 rounded-2xl glow-teal hover:scale-[1.02] transition ${
                   total === 0 ? "opacity-60 pointer-events-none" : ""
                 }`}
@@ -949,7 +1111,7 @@ function Referencia() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-7">
           {stats.map((s, i) => (
             <div
               key={i}
@@ -1018,7 +1180,7 @@ function Garantia() {
 
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               <a
-                href={wa("Quero agendar meu serviço com garantia.")}
+                href={wa(MSG_GARANTIA)}
                 className="inline-flex items-center gap-2 gradient-teal text-primary-foreground font-bold px-7 py-4 rounded-2xl glow-teal hover:scale-[1.03] transition"
               >
                 <Zap className="size-5" />
@@ -1082,7 +1244,7 @@ function Footer() {
 
             <div className="mt-5 flex gap-2">
               <a
-                href={wa("Olá!")}
+                href={wa(MSG_FLUTUANTE)}
                 className="size-10 rounded-xl glass grid place-items-center hover:gradient-teal hover:text-primary-foreground transition"
               >
                 <MessageCircle className="size-5" />
@@ -1146,7 +1308,7 @@ function Footer() {
             <ul className="space-y-2 text-sm text-foreground/80">
               <li className="flex items-start gap-2">
                 <Phone className="size-4 text-primary mt-0.5" />
-                (00) 00000-0000
+                (35) 9729-1894
               </li>
 
               <li className="flex items-start gap-2">
@@ -1182,7 +1344,7 @@ function Footer() {
 function FloatingWA() {
   return (
     <a
-      href={wa("Olá! Vim pelo site.")}
+      href={wa(MSG_FLUTUANTE)}
       target="_blank"
       rel="noreferrer"
       className="fixed bottom-5 right-5 z-40 group"
