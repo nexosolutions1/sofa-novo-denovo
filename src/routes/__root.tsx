@@ -96,8 +96,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Higienização profunda, remoção de manchas e blindagem impermeabilizante para sofás, colchões, cadeiras, tapetes e estofados. Resultado imediato ou você não paga.",
       },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+{ property: "og:image", content: "https://sofa-novo-denovo.netlify.app/og-image.png" },
+{ property: "og:image:secure_url", content: "https://sofa-novo-denovo.netlify.app/og-image.png" },
+{ property: "og:image:type", content: "image/png" },
+{ property: "og:image:width", content: "1200" },
+{ property: "og:image:height", content: "630" },
+{ property: "og:type", content: "website" },
+{ property: "og:url", content: "https://sofa-novo-denovo.netlify.app/" },
+{ property: "og:site_name", content: "Sofá Novo de Novo" },
+{ property: "og:locale", content: "pt_BR" },
+{ name: "twitter:card", content: "summary_large_image" },
+{ name: "twitter:image", content: "https://sofa-novo-denovo.netlify.app/og-image.png" },
       {
         name: "twitter:title",
         content: "Sofá Novo de Novo | Higienização e Blindagem de Estofados",
@@ -112,6 +121,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "canonical", href: "https://sofa-novo-denovo.netlify.app/" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap",
