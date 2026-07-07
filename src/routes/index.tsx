@@ -48,24 +48,74 @@ import { NovaNexoBadge } from "@/components/NovaNexoBadge";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sofá Novo de Novo | Higienização e Blindagem Premium de Estofados" },
       {
-        name: "description",
-        content:
-          "Líder nacional em higienização profunda e blindagem impermeabilizante de estofados. +300 unidades, +15 anos, garantia total.",
-      },
-      {
-        property: "og:title",
-        content: "Sofá Novo de Novo — Referência Nacional em Higienização",
-      },
-      {
-        property: "og:description",
-        content:
-          "Tecnologia hospitalar, produtos aprovados pelo Dr. Bactéria, garantia de resultado imediato.",
-      },
-      { property: "og:url", content: "/" },
+  title: "Sofá Novo de Novo | Higienização e Blindagem Premium de Estofados",
+},
+{
+  name: "description",
+  content:
+    "Líder nacional em higienização profunda e blindagem impermeabilizante de estofados. +300 unidades, +15 anos, garantia total.",
+},
+{
+  property: "og:title",
+  content: "Sofá Novo de Novo — Referência Nacional em Higienização",
+},
+{
+  property: "og:description",
+  content:
+    "Tecnologia hospitalar, produtos aprovados pelo Dr. Bactéria, garantia de resultado imediato.",
+},
+
+// TROQUE ESSE
+
+{
+  property: "og:image",
+  content: "https://sofa-novo-denovo.netlify.app/og-image.png",
+},
+{
+  property: "og:image:width",
+  content: "1200",
+},
+{
+  property: "og:image:height",
+  content: "630",
+},
+{
+  property: "og:type",
+  content: "website",
+},
+{
+  property: "og:site_name",
+  content: "Sofá Novo de Novo",
+},
+{
+  property: "og:locale",
+  content: "pt_BR",
+},
+{
+  name: "twitter:card",
+  content: "summary_large_image",
+},
+{
+  name: "twitter:image",
+  content: "https://sofa-novo-denovo.netlify.app/og-image.png",
+},
+
+// TROQUE ESSE
+{
+  property: "og:url",
+  content: "https://sofa-novo-denovo.netlify.app",
+},
     ],
-    links: [{ rel: "canonical", href: "/" }],
+links: [
+  {
+    rel: "canonical",
+    href: "https://sofa-novo-denovo.netlify.app",
+  },
+],
+
+
+
   }),
   component: Home,
 });
@@ -1258,7 +1308,7 @@ function Footer() {
               </a>
 
               <a
-                href="tel:+5500000000000"
+                href="tel:+55 35 9729-1894"
                 className="size-10 rounded-xl glass grid place-items-center hover:gradient-teal hover:text-primary-foreground transition"
               >
                 <Phone className="size-5" />
