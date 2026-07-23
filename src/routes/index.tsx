@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Menu,
   X,
@@ -136,8 +136,6 @@ const MSG_ORCAMENTO =
 const MSG_BLINDAGEM =
   "Olá!\n\nQuero proteger meu sofá contra líquidos, manchas e sujeira com a blindagem impermeabilizante.\n\nPode me passar um orçamento?";
 
-const MSG_CALCULADORA = (valor: string) =>
-  `Olá!\n\nMontei uma simulação pelo site.\n\nValor estimado: ${valor}\n\nGostaria de confirmar o orçamento e tirar algumas dúvidas.`;
 
 const MSG_GARANTIA =
   "Olá!\n\nGostaria de agendar uma higienização com garantia de resultado.\n\nComo funciona?";
@@ -159,7 +157,6 @@ const NAV = [
   { label: "Transformações", href: "#transformacoes" },
   { label: "Processo", href: "#processo" },
   { label: "Dr. Bactéria", href: "#dr-bacteria" },
-  { label: "Calculadora", href: "#calculadora" },
   { label: "Contato", href: "#contato" },
 ];
 
@@ -226,7 +223,6 @@ function Home() {
       <Processo />
       <Impact />
       <Blindagem />
-      <Calculator />
       <DrBacteriaSection />
       <Referencia />
       <BrazilMap />
@@ -969,175 +965,6 @@ function Blindagem() {
   );
 }
 
-const ITEMS = [
-  { id: "sofa2", label: "Sofá 2 lugares", base: 220 },
-  { id: "sofa3", label: "Sofá 3 lugares", base: 280 },
-  { id: "sofa3r", label: "Sofá 3 lugares retrátil", base: 360 },
-  { id: "canto", label: "Sofá de canto", base: 480 },
-  { id: "colcQ", label: "Colchão Queen", base: 240 },
-  { id: "colcK", label: "Colchão King", base: 290 },
-  { id: "poltrona", label: "Poltrona", base: 120 },
-  { id: "tapete", label: "Tapete (m²)", base: 45 },
-  { id: "carro", label: "Banco automotivo", base: 320 },
-];
-
-const SERVS = [
-  { id: "higi", label: "Higienização", mult: 1 },
-  { id: "blind", label: "Blindagem", mult: 1.4 },
-  { id: "ambos", label: "Higienização + Blindagem", mult: 2.1 },
-];
-
-function Calculator() {
-  const [sel, setSel] = useState<Record<string, number>>({});
-  const [serv, setServ] = useState(SERVS[0].id);
-
-  const total = useMemo(() => {
-    const m = SERVS.find((s) => s.id === serv)!.mult;
-    return ITEMS.reduce((acc, it) => acc + (sel[it.id] || 0) * it.base * m, 0);
-  }, [sel, serv]);
-
-  const fmt = (n: number) =>
-    n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-  const set = (id: string, v: number) =>
-    setSel((s) => ({ ...s, [id]: Math.max(0, v) }));
-
-  return (
-    <section id="calculadora" className="relative surface-deeper py-20 lg:py-28">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--primary) 18%, transparent), transparent 55%)",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <span className="text-xs sm:text-sm uppercase tracking-[0.3em] text-primary font-semibold">
-            Configurador
-          </span>
-
-          <h2 className="mt-3 font-display font-black text-4xl sm:text-5xl lg:text-6xl">
-            Monte seu <span className="text-gradient">orçamento</span>
-          </h2>
-
-          <p className="mt-4 text-foreground/65 text-lg">
-            Como um configurador de carro de luxo. Em tempo real.
-          </p>
-        </div>
-
-        <div className="glass-strong rounded-[2rem] p-6 sm:p-10 relative overflow-hidden">
-          <div
-            className="pointer-events-none absolute -top-20 -right-20 size-60 rounded-full opacity-40"
-            style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)" }}
-          />
-
-          <div className="grid lg:grid-cols-[1.4fr_1fr] gap-8 relative">
-            <div>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {SERVS.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setServ(s.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
-                      serv === s.id
-                        ? "gradient-teal text-primary-foreground glow-teal"
-                        : "glass hover:bg-white/10"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-
-              <div className="space-y-2">
-                {ITEMS.map((it) => {
-                  const q = sel[it.id] || 0;
-
-                  return (
-                    <div
-                      key={it.id}
-                      className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl p-3 sm:p-4 transition border ${
-                        q > 0
-                          ? "border-primary/40 bg-primary/5"
-                          : "border-white/5 bg-white/[0.02]"
-                      }`}
-                    >
-                      <div className="min-w-0">
-                        <div className="font-semibold truncate">{it.label}</div>
-                        <div className="text-xs text-foreground/55">
-                          a partir de {fmt(it.base)}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => set(it.id, q - 1)}
-                          className="size-9 rounded-lg glass grid place-items-center hover:bg-white/10"
-                        >
-                          −
-                        </button>
-
-                        <div className="w-8 text-center font-bold tabular-nums">{q}</div>
-
-                        <button
-                          onClick={() => set(it.id, q + 1)}
-                          className="size-9 rounded-lg gradient-teal text-primary-foreground grid place-items-center font-bold"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <aside className="lg:sticky lg:top-28 self-start glass rounded-2xl p-6 glow-soft">
-              <div className="text-xs uppercase tracking-widest text-foreground/60">
-                Total estimado
-              </div>
-
-              <div className="mt-2 font-display font-black text-5xl text-gradient">
-                {fmt(total)}
-              </div>
-
-              <div className="mt-2 text-sm text-foreground/65">
-                ou{" "}
-                <span className="font-semibold text-foreground">
-                  {fmt(total * 0.95)}
-                </span>{" "}
-                à vista no Pix (5% off)
-              </div>
-
-              <div className="mt-1 text-sm text-foreground/65">
-                em até <span className="font-semibold text-foreground">10x</span> de{" "}
-                {fmt(total / 10)}
-              </div>
-
-              <a
-                href={wa(MSG_CALCULADORA(fmt(total)))}
-                className={`mt-6 w-full inline-flex justify-center items-center gap-2 gradient-teal text-primary-foreground font-bold px-6 py-3.5 rounded-2xl glow-teal hover:scale-[1.02] transition ${
-                  total === 0 ? "opacity-60 pointer-events-none" : ""
-                }`}
-              >
-                <MessageCircle className="size-5" />
-                Enviar para o WhatsApp
-              </a>
-
-              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-foreground/55">
-                <ShieldCheck className="size-3.5 text-primary" />
-                Garantia de resultado
-              </div>
-            </aside>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Referencia() {
   const stats = [
     { k: "+15", v: "Anos de experiência", icon: Award },
@@ -1235,13 +1062,6 @@ function Garantia() {
               >
                 <Zap className="size-5" />
                 Agendar com garantia
-              </a>
-
-              <a
-                href="#calculadora"
-                className="inline-flex items-center gap-2 glass px-7 py-4 rounded-2xl font-semibold"
-              >
-                Calcular orçamento
               </a>
             </div>
 
